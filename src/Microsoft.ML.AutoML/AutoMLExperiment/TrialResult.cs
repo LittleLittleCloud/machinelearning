@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Microsoft.ML.AutoML
 {
-    internal class TrialResult
+    public class TrialResult
     {
         public TrialSettings TrialSettings { get; set; }
 

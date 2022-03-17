@@ -8,18 +8,18 @@ using System.Text;
 
 namespace Microsoft.ML.AutoML
 {
-    internal interface IDatasetSettings
+    public interface IDatasetSettings
     {
     }
 
-    internal class TrainTestDatasetSettings : IDatasetSettings
+    public class TrainTestDatasetSettings : IDatasetSettings
     {
         public IDataView TrainDataset { get; set; }
 
         public IDataView TestDataset { get; set; }
     }
 
-    internal class CrossValidateDatasetSettings : IDatasetSettings
+    public class CrossValidateDatasetSettings : IDatasetSettings
     {
         public IDataView Dataset { get; set; }
 

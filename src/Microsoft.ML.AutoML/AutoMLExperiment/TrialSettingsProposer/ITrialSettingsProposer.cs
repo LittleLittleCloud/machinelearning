@@ -4,14 +4,14 @@
 
 namespace Microsoft.ML.AutoML
 {
-    internal interface ITrialSettingsProposer
+    public interface ITrialSettingsProposer
     {
         TrialSettings Propose(TrialSettings settings);
 
         void Update(TrialSettings parameter, TrialResult result);
     }
 
-    internal interface ISavableProposer : ITrialSettingsProposer
+    public interface ISavableProposer : ITrialSettingsProposer
     {
         void SaveStatusToFile(string fileName);
 

@@ -9,12 +9,12 @@ using Microsoft.ML.Data;
 
 namespace Microsoft.ML.AutoML
 {
-    internal interface IMetricSettings
+    public interface IMetricSettings
     {
         bool IsMaximize { get; }
     }
 
-    internal class BinaryMetricSettings : IMetricSettings
+    public class BinaryMetricSettings : IMetricSettings
     {
         public BinaryClassificationMetric Metric { get; set; }
 
@@ -36,7 +36,7 @@ namespace Microsoft.ML.AutoML
         };
     }
 
-    internal class MultiClassMetricSettings : IMetricSettings
+    public class MultiClassMetricSettings : IMetricSettings
     {
         public MulticlassClassificationMetric Metric { get; set; }
 
@@ -50,7 +50,7 @@ namespace Microsoft.ML.AutoML
         };
     }
 
-    internal class RegressionMetricSettings : IMetricSettings
+    public class RegressionMetricSettings : IMetricSettings
     {
         public RegressionMetric Metric { get; set; }
 

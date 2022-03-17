@@ -7,12 +7,12 @@ using System.Diagnostics;
 
 namespace Microsoft.ML.AutoML
 {
-    internal interface ITrialRunner
+    public interface ITrialRunner
     {
         TrialResult Run(MLContext context, TrialSettings settings);
     }
 
-    internal class BinaryClassificationCVRunner : ITrialRunner
+    public class BinaryClassificationCVRunner : ITrialRunner
     {
         public TrialResult Run(MLContext context, TrialSettings settings)
         {
@@ -55,7 +55,7 @@ namespace Microsoft.ML.AutoML
         }
     }
 
-    internal class BinaryClassificationTrainTestRunner : ITrialRunner
+    public class BinaryClassificationTrainTestRunner : ITrialRunner
     {
         public TrialResult Run(MLContext context, TrialSettings settings)
         {

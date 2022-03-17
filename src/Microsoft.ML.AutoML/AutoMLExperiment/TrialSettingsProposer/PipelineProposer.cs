@@ -14,7 +14,7 @@ namespace Microsoft.ML.AutoML
     /// <summary>
     /// propose sweepable estimator pipeline from a group of candidates using eci in flaml (https://arxiv.org/abs/1911.04706)
     /// </summary>
-    internal class PipelineProposer : ISavableProposer
+    public class PipelineProposer : ISavableProposer
     {
         private readonly Dictionary<EstimatorType, double> _estimatorCost;
         private Dictionary<string, double> _learnerInitialCost;

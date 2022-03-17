@@ -37,7 +37,7 @@ using Anchor = Microsoft.ML.Transforms.Image.ImageResizingEstimator.Anchor;
 
 namespace ");
             this.Write(this.ToStringHelper.ToStringWithCulture(NameSpace));
-            this.Write("\r\n{\r\n    internal partial class ");
+            this.Write("\r\n{\r\n    public partial class ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
             this.Write(" : SweepableEstimator\r\n    {\r\n        public ");
             this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));

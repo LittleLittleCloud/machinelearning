@@ -5,11 +5,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 using Microsoft.ML.Runtime;
 
 namespace Microsoft.ML.AutoML
 {
-    internal interface IMonitor
+    public interface IMonitor
     {
         void ReportCompletedTrial(TrialResult result);
 
@@ -21,7 +22,7 @@ namespace Microsoft.ML.AutoML
     }
 
     // this monitor redirects output result to context.log
-    internal class MLContextMonitor : IMonitor
+    public class MLContextMonitor : IMonitor
     {
         private readonly MLContext _context;
         private readonly IChannel _logger;
@@ -53,6 +54,11 @@ namespace Microsoft.ML.AutoML
         public void ReportRunningTrial(TrialSettings setting)
         {
             this._logger.Info($"Update Running Trial - Id: {setting.TrialId} - Pipeline: {setting.Pipeline}");
+            var param = JsonSerializer.Serialize(setting.Parameter, new JsonSerializerOptions()
+            {
+                WriteIndented = true,
+            });
+            this._logger.Info($"parameter - {param}");
         }
     }
 }

@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 namespace Microsoft.ML.AutoML
 {
     [JsonConverter(typeof(MultiModelPipelineConverter))]
-    internal class MultiModelPipeline
+    public class MultiModelPipeline
     {
         private static readonly StringEntity _nilStringEntity = new StringEntity("Nil");
         private static readonly EstimatorEntity _nilSweepableEntity = new EstimatorEntity(null);

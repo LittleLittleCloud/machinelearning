@@ -7,7 +7,7 @@ using Microsoft.ML.SearchSpace;
 
 namespace Microsoft.ML.AutoML
 {
-    internal class HyperParameterProposer : ITrialSettingsProposer
+    public class HyperParameterProposer : ITrialSettingsProposer
     {
         private readonly Dictionary<string, ITuner> _tuners;
 

@@ -9,7 +9,7 @@ using Microsoft.ML.SearchSpace;
 
 namespace Microsoft.ML.AutoML
 {
-    internal class TrialSettings
+    public class TrialSettings
     {
         public int TrialId { get; set; }
 

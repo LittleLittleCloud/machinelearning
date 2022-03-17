@@ -14,7 +14,7 @@ using Microsoft.ML.SearchSpace;
 
 namespace Microsoft.ML.AutoML
 {
-    internal class AutoMLExperiment
+    public class AutoMLExperiment
     {
         private readonly AutoMLExperimentSettings _settings;
         private readonly MLContext _context;

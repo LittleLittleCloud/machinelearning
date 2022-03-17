@@ -15,7 +15,7 @@ using Anchor = Microsoft.ML.Transforms.Image.ImageResizingEstimator.Anchor;
 
 namespace <#=NameSpace#>
 {
-    internal partial class <#=ClassName#> : SweepableEstimator
+    public partial class <#=ClassName#> : SweepableEstimator
     {
         public <#=ClassName#>()
         {
