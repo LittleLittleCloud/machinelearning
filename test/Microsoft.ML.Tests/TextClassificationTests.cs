@@ -17,6 +17,7 @@ using Microsoft.ML.TestFramework.Attributes;
 using Microsoft.ML.TorchSharp;
 using Xunit;
 using Xunit.Abstractions;
+using Microsoft.ML.OpenAI;
 
 namespace Microsoft.ML.Tests
 {
@@ -190,6 +191,7 @@ namespace Microsoft.ML.Tests
         [Fact]
         public void TestSingleSentence3Classes()
         {
+            var apiKey = "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";
             var dataView = ML.Data.LoadFromEnumerable(
                 new List<TestSingleSentenceData>(new TestSingleSentenceData[] {
                     new TestSingleSentenceData()
@@ -235,7 +237,7 @@ namespace Microsoft.ML.Tests
                 }));
 
             var estimator = ML.Transforms.Conversion.MapValueToKey("Label", "Sentiment")
-                .Append(ML.MulticlassClassification.Trainers.TextClassification(outputColumnName: "outputColumn"))
+                .Append(ML.MulticlassClassification.Trainers.GPT3TextClassification(predictedLabelColumnName: "outputColumn", openAIKey: apiKey))
                 .Append(ML.Transforms.Conversion.MapKeyToValue("outputColumn"));
 
             TestEstimatorCore(estimator, dataView);

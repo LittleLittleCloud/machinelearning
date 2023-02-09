@@ -64,7 +64,7 @@ namespace Microsoft.ML.TestFramework
             FullTestName = test.TestCase.TestMethod.TestClass.Class.Name + "." + test.TestCase.TestMethod.Method.Name;
             TestName = test.TestCase.TestMethod.Method.Name;
 
-            MessageKindToLog = ChannelMessageKind.Error;
+            MessageKindToLog = ChannelMessageKind.Trace;
             var attributes = test.TestCase.TestMethod.Method.GetCustomAttributes(typeof(LogMessageKind));
             foreach (var attrib in attributes)
             {

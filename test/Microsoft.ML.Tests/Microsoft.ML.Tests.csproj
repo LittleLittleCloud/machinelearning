@@ -4,7 +4,7 @@
     <AssemblyName>Microsoft.ML.Tests</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <StrongNameKeyId>Test</StrongNameKeyId>
-    <NoWarn>$(NoWarn);MSB3270</NoWarn>
+    <NoWarn>$(NoWarn);MSB3270;CS8002</NoWarn>
   </PropertyGroup>
 
   <!-- Import the test signing certificate -->
@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.ML.Data\Microsoft.ML.Data.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.Data.Analysis\Microsoft.Data.Analysis.csproj" />
+    <ProjectReference Condition="'$(TargetFramework)' == 'net6.0'" Include="..\..\src\Microsoft.ML.OpenAI\Microsoft.ML.OpenAI.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.ML.Vision\Microsoft.ML.Vision.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.ML.Ensemble\Microsoft.ML.Ensemble.csproj" />
     <ProjectReference Include="..\..\src\Microsoft.ML.EntryPoints\Microsoft.ML.EntryPoints.csproj" />
@@ -37,7 +38,7 @@
     <ProjectReference Include="..\Microsoft.ML.TestFramework\Microsoft.ML.TestFramework.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetArchitecture)' != 'x64'">
+  <ItemGroup Condition="'$(TargetArchitecture)' != 'x64' Or '$(TargetFramework)' != 'net6.0'">
     <Compile Remove="TextClassificationTests.cs" />
   </ItemGroup>
 

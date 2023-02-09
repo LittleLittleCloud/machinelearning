@@ -1,9 +1,14 @@
-﻿using System;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using System;
 using System.Collections.Generic;
 using Microsoft.ML.OpenAI;
 using Microsoft.ML;
+using Microsoft.ML.Data;
 
-namespace Microsoft.ML.AutoML.Samples
+namespace Microsoft.ML.OpenAI
 {
     public class Program
     {
@@ -18,7 +23,7 @@ namespace Microsoft.ML.AutoML.Samples
             try
             {
                 var context = new MLContext();
-                context.Log += Context_Log;
+                context.Log += ContextLog;
                 var apiKey = "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";
                 var dataView = context.Data.LoadFromEnumerable(
                     new List<TestSingleSentenceData>(new TestSingleSentenceData[] {
@@ -65,42 +70,26 @@ namespace Microsoft.ML.AutoML.Samples
                     }));
 
                 var pipeline = context.Transforms.Conversion.MapValueToKey("Label", "Sentiment")
-                    .Append(context.MulticlassClassification.Trainers.GPT3TextClassification(predictedLabelColumnName: "outputColumn", openAIKey: apiKey))
-                    .Append(context.Transforms.Conversion.MapKeyToValue("outputColumn"));
+                    .Append(context.MulticlassClassification.Trainers.GPT3TextClassification(openAIKey: apiKey))
+                    .Append(context.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 
                 var model = pipeline.Fit(dataView);
 
                 var test = model.Transform(dataView);
+                var predictedLabels = test.GetColumn<string>("PredictedLabel");
 
-                RecommendationExperiment.Run();
-                Console.Clear();
-
-                RegressionExperiment.Run();
-                Console.Clear();
-
-                BinaryClassificationExperiment.Run();
-                Console.Clear();
-
-                MulticlassClassificationExperiment.Run();
-                Console.Clear();
-
-                RankingExperiment.Run();
-                Console.Clear();
-
-                Cifar10.Run();
-                Console.Clear();
-
-                Console.WriteLine("Done");
+                foreach (var label in predictedLabels)
+                {
+                    Console.WriteLine(label);
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Exception {ex}");
             }
-
-            Console.ReadLine();
         }
 
-        private static void Context_Log(object sender, LoggingEventArgs e)
+        private static void ContextLog(object sender, LoggingEventArgs e)
         {
             Console.WriteLine(e.Message);
         }
