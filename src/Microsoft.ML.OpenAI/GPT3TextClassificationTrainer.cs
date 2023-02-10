@@ -56,69 +56,69 @@ namespace Microsoft.ML.OpenAI
                 {
                     ApiKey = _openAIKey,
                 });
-                //var texts = input.GetColumn<string>(_textColumnName);
+                var texts = input.GetColumn<string>(_textColumnName);
                 var labels = input.GetColumn<UInt32>(_labelColumnName);
                 _numberOfClasses = labels.Distinct().Count();
-                //Contracts.Assert(texts.Count() == labels.Count());
+                Contracts.Assert(texts.Count() == labels.Count());
 
-                //// create file to upload
-                //var jsonL = Path.GetTempFileName();
-                //ch.Trace($"create jsonL file: {jsonL}");
-                //using (var stream = new StreamWriter(jsonL))
-                //{
-                //    foreach (var line in Enumerable.Zip(texts, labels))
-                //    {
-                //        var dict = new Dictionary<string, string>();
-                //        dict["prompt"] = line.First;
-                //        dict["completion"] = line.Second.ToString();
-                //        var str = JsonConvert.SerializeObject(dict);
-                //        ch.Trace($"add line: {str}");
-                //        stream.WriteLine(str);
-                //    }
-                //    Host.CheckAlive();
-                //}
+                // create file to upload
+                var jsonL = Path.GetTempFileName();
+                ch.Trace($"create jsonL file: {jsonL}");
+                using (var stream = new StreamWriter(jsonL))
+                {
+                    foreach (var line in Enumerable.Zip(texts, labels))
+                    {
+                        var dict = new Dictionary<string, string>();
+                        dict["prompt"] = line.First;
+                        dict["completion"] = line.Second.ToString();
+                        var str = JsonConvert.SerializeObject(dict);
+                        ch.Trace($"add line: {str}");
+                        stream.WriteLine(str);
+                    }
+                    Host.CheckAlive();
+                }
 
-                //// upload
-                //var sampleFile = File.ReadAllBytes(jsonL);
-                //var uploadFileResponse = openAIService.UploadFile("fine-tune", sampleFile, jsonL).Result;
-                //if (uploadFileResponse.Successful)
-                //{
-                //    ch.Trace("upload file successfully");
-                //}
-                //else
-                //{
-                //    throw new ArgumentException(uploadFileResponse.Error?.Message);
-                //}
+                // upload
+                var sampleFile = File.ReadAllBytes(jsonL);
+                var uploadFileResponse = openAIService.UploadFile("fine-tune", sampleFile, jsonL).Result;
+                if (uploadFileResponse.Successful)
+                {
+                    ch.Trace("upload file successfully");
+                }
+                else
+                {
+                    throw new ArgumentException(uploadFileResponse.Error?.Message);
+                }
 
-                //// 
-                //var createFineTuneResponse = openAIService.CreateFineTune(new global::OpenAI.GPT3.ObjectModels.RequestModels.FineTuneCreateRequest
-                //{
-                //    TrainingFile = uploadFileResponse.Id,
-                //    Model = Models.Ada,
-                //}).Result;
+                // 
+                var createFineTuneResponse = openAIService.CreateFineTune(new global::OpenAI.GPT3.ObjectModels.RequestModels.FineTuneCreateRequest
+                {
+                    TrainingFile = uploadFileResponse.Id,
+                    Model = Models.Ada,
+                }).Result;
 
-                //var listFineTuneEventsStream = openAIService.ListFineTuneEvents(createFineTuneResponse.Id, true).Result;
-                //using var streamReader = new StreamReader(listFineTuneEventsStream);
-                //while (!streamReader.EndOfStream)
-                //{
-                //    ch.Trace(streamReader.ReadLine());
-                //}
+                var listFineTuneEventsStream = openAIService.ListFineTuneEvents(createFineTuneResponse.Id, true).Result;
+                using var streamReader = new StreamReader(listFineTuneEventsStream);
+                while (!streamReader.EndOfStream)
+                {
+                    ch.Trace(streamReader.ReadLine());
+                }
 
-                //FineTuneResponse retrieveFineTuneResponse;
-                //do
-                //{
-                //    retrieveFineTuneResponse = openAIService.RetrieveFineTune(createFineTuneResponse.Id).Result;
-                //    if (retrieveFineTuneResponse.Status == "succeeded" || retrieveFineTuneResponse.Status == "cancelled" || retrieveFineTuneResponse.Status == "failed")
-                //    {
-                //        ch.Trace($"Fine-tune Status for {createFineTuneResponse.Id}: {retrieveFineTuneResponse.Status}.");
-                //        break;
-                //    }
+                FineTuneResponse retrieveFineTuneResponse;
+                do
+                {
+                    retrieveFineTuneResponse = openAIService.RetrieveFineTune(createFineTuneResponse.Id).Result;
+                    if (retrieveFineTuneResponse.Status == "succeeded" || retrieveFineTuneResponse.Status == "cancelled" || retrieveFineTuneResponse.Status == "failed")
+                    {
+                        ch.Trace($"Fine-tune Status for {createFineTuneResponse.Id}: {retrieveFineTuneResponse.Status}.");
+                        break;
+                    }
 
-                //    ch.Trace($"Fine-tune Status for {createFineTuneResponse.Id}: {retrieveFineTuneResponse.Status}. Wait 10 more seconds");
-                //    Task.Delay(10_000).Wait();
-                //} while (true);
+                    ch.Trace($"Fine-tune Status for {createFineTuneResponse.Id}: {retrieveFineTuneResponse.Status}. Wait 10 more seconds");
+                    Task.Delay(10_000).Wait();
+                } while (true);
 
-                ModelID = "ada:ft-personal-2023-02-09-05-27-43";
+                ModelID = retrieveFineTuneResponse.FineTunedModel;
                 ch.Trace($"Model ID {ModelID}");
 
                 return this;

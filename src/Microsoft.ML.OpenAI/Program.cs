@@ -24,7 +24,7 @@ namespace Microsoft.ML.OpenAI
             {
                 var context = new MLContext();
                 context.Log += ContextLog;
-                var apiKey = "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";
+                var apiKey = "Use your own key";
                 var dataView = context.Data.LoadFromEnumerable(
                     new List<TestSingleSentenceData>(new TestSingleSentenceData[] {
                     new TestSingleSentenceData()
