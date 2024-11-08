@@ -1,0 +1,4 @@
+﻿0: bias shape: [200]
+1: lora_A.adapter1.weight shape: [1, 100]
+2: lora_B.adapter1.weight shape: [200, 1]
+3: weight shape: [200, 100]

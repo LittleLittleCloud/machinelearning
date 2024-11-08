@@ -16,6 +16,37 @@ using static TorchSharp.torch.nn;
 namespace Microsoft.ML.GenAI.Core;
 public static class Utils
 {
+    /// <summary>
+    /// Insert the <paramref name="adapterName"/> into the tensor's name where the tensor name contains the <paramref name="parameterPrefix"/>.
+    /// 
+    /// The <paramref name="adapterName"/> will be inserted before the <paramref name="parameterPrefix"/> and after the most recent ".".
+    /// 
+    /// If the adapter name is "adapter1" and the parameter prefix is "lora_", and the tensor name is "baseModel.encoder.layer.0.lora_A.weight",
+    /// The new tensor name will be "baseModel.encoder.layer.0.adapter1.lora_A.weight".
+    /// </summary>
+    /// <param name="stateDict"></param>
+    /// <param name="adapterName"></param>
+    /// <param name="parameterPrefix"></param>
+    /// <returns></returns>
+    public static Dictionary<string, Tensor> InsertAdapterNameIntoStateDict(Dictionary<string, Tensor> stateDict, string adapterName, string parameterPrefix)
+    {
+        var newDict = new Dictionary<string, Tensor>();
+        foreach (var (key, value) in stateDict)
+        {
+            if (key.Contains(parameterPrefix))
+            {
+                var insertPart = $"{adapterName}.{parameterPrefix}";
+                var newKey = key.Replace(parameterPrefix, insertPart);
+                newDict[newKey] = value;
+            }
+            else
+            {
+                newDict[key] = value;
+            }
+        }
+
+        return newDict;
+    }
     public static Tensor ApplyRotaryEmbeddings(Tensor input, Tensor freqsComplex)
     {
         // Separate the last dimension pairs of two values, representing the real and imaginary parts of the complex number
