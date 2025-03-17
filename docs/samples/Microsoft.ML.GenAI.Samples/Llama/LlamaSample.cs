@@ -42,7 +42,7 @@ internal class LlamaSample
             .RegisterPrintMessage();
 
         var task = """
-            Write a C# program to print the sum of two numbers. Use top-level statement, put code between ```csharp and ```.
+            Write a function that takes a list of integers and returns the sum of all the integers in the list.
             """;
 
         await agent.SendAsync(task);

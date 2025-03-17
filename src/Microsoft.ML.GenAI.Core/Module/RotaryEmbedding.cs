@@ -105,20 +105,22 @@ internal class RotaryEmbedding : nn.Module<
 #pragma warning restore MSML_GeneralName // This name should be PascalCased
     {
         var x = input.Input;
+        // positionIds: [bsz, seqLen]
         var positionIds = input.PositionIds;
         var seqLen = input.SeqLen;
-        // TODO
-        // can be calculated once and cached
+        // invFreq: [dim]
         var invFreq = this.get_buffer("inv_freq")!.to(x.device);
-        var invFreqExpanded = invFreq.unsqueeze(0).unsqueeze(-1);
-        invFreqExpanded = invFreqExpanded.expand(new long[] { positionIds.shape[0], -1, 1 });
-        var positionIdsExpanded = positionIds.unsqueeze(1).to(torch.float32);
-        var freqs = invFreqExpanded * positionIdsExpanded;
-        freqs = freqs.transpose(1, 2);
-        var emb = torch.cat([freqs, freqs], dim: -1);
+        // invFreqExpanded: [1, 1, dim]
+        var invFreqExpanded = invFreq.unsqueeze(0).unsqueeze(0);
 
-        var cos = torch.cos(emb);
-        var sin = torch.sin(emb);
+        // positionIdsExpanded: [bsz, seqLen, 1]
+        var positionIdsExpanded = positionIds.unsqueeze(-1);
+
+        // freqs: [bsz, seqLen, dim]
+        var freqs = invFreqExpanded * positionIdsExpanded;
+
+        var cos = torch.cos(freqs);
+        var sin = torch.sin(freqs);
 
         return new(cos.to_type(x.dtype), sin.to_type(x.dtype));
     }

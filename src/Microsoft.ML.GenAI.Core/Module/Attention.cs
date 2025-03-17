@@ -169,7 +169,9 @@ internal class Attention : nn.Module<AttentionInput, AttentionOutput>
             {
                 kvSeqLen += pastKeyValue.GetUsableLength(kvSeqLen, this._layerIdx);
             }
-            (queryStates, keyStates) = Utils.ApplyRotaryPosEmb(queryStates, keyStates, input.PositionalEmbeddings.Cos, input.PositionalEmbeddings.Sin);
+
+            queryStates = Utils.ApplyRotaryPosEmb(queryStates, input.PositionalEmbeddings.Cos, input.PositionalEmbeddings.Sin);
+            keyStates = Utils.ApplyRotaryPosEmb(keyStates, input.PositionalEmbeddings.Cos, input.PositionalEmbeddings.Sin);
 
             if (pastKeyValue is not null)
             {

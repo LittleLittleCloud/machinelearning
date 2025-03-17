@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TorchSharp;
+using TorchSharp.GenAIKernel;
 using TorchSharp.Modules;
 using static TorchSharp.torch;
 
@@ -20,7 +21,7 @@ internal class RMSNorm : torch.nn.Module<Tensor, Tensor>
     private readonly int _dim;
     private readonly float _eps;
 #pragma warning disable MSML_PrivateFieldName // Private field name not in: _camelCase format
-    private readonly Parameter weight;
+    private readonly Tensor weight;
 #pragma warning restore MSML_PrivateFieldName // Private field name not in: _camelCase format
 
     public RMSNorm(
@@ -33,7 +34,7 @@ internal class RMSNorm : torch.nn.Module<Tensor, Tensor>
         this._eps = eps;
 
         // the gamma scalar
-        this.weight = torch.nn.Parameter(torch.ones(this._dim, dtype: dtype));
+        this.weight = torch.ones(this._dim, dtype: dtype);
     }
 
     private Tensor Norm(Tensor x)
@@ -48,12 +49,13 @@ internal class RMSNorm : torch.nn.Module<Tensor, Tensor>
     public override Tensor forward(Tensor input)
 #pragma warning restore MSML_GeneralName // This name should be PascalCased
     {
-        // needs higher precision for the norm so convert to float32
-        // (B, Seq_Len, Dim)
-        var normed = this.Norm(input.to_type(ScalarType.Float32)).type_as(input);
-        // (B, Seq_Len, Dim) * (Dim) = (B, Seq_Len, Dim)
-        var output = this.weight * normed;
+        //// needs higher precision for the norm so convert to float32
+        //// (B, Seq_Len, Dim)
+        //var normed = this.Norm(input.to_type(ScalarType.Float32)).type_as(input);
+        //// (B, Seq_Len, Dim) * (Dim) = (B, Seq_Len, Dim)
+        //var output = this.weight * normed;
 
-        return output;
+        //return output;
+        return TorchSharp.GenAIKernel.RMSNorm.BF16X8(input, this.weight);
     }
 }

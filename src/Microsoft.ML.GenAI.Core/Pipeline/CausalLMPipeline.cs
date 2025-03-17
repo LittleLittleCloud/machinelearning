@@ -4,10 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.ML.GenAI.Core.Extension;
 using Microsoft.ML.Tokenizers;
 using TorchSharp;
 using static TorchSharp.torch;
@@ -244,6 +242,8 @@ public class CausalLMPipeline : ICausalLMPipeline
         string[]? stopSequences = Defaults.StopSequence)
     {
         using var newScope = NewDisposeScope();
+        Stopwatch? stopWatch = null;
+        int tokensGenerated = 0;
         var inputIds = this.Tokenizer.EncodeToIds(prompt);
         var inputTensor = torch.tensor(inputIds.ToArray(), dtype: ScalarType.Int64, device: this.Device).unsqueeze(0);
         var attentionMask = torch.ones_like(inputTensor, device: this.Device);
@@ -284,9 +284,20 @@ public class CausalLMPipeline : ICausalLMPipeline
 
             // replace the first occurrence of the token with the duplicate token
             tokenString = duplicateTokenString.Substring(tokenString.Length);
+            if (tokensGenerated == 0)
+            {
+                stopWatch = Stopwatch.StartNew();
+            }
+
+            tokensGenerated++;
 
             yield return tokenString;
         }
+
+        stopWatch!.Stop();
+        var tokenPerSecond = tokensGenerated / stopWatch.Elapsed.TotalSeconds;
+
+        Console.WriteLine($"Generated {tokensGenerated} tokens in {stopWatch.Elapsed.TotalSeconds} seconds. {tokenPerSecond} tokens per second.");
     }
 
     protected torch.Tensor SampleTopP(torch.Tensor logits, float topP)
